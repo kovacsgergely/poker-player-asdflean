@@ -83,10 +83,10 @@ class Player
     				}
     			}
     			if (!$raised) {
-    				if ($handStrength >= 5) {
-    					return $call;
-    				} elseif ($handStrength >= 8) {
+    				if ($handStrength >= 8) {
     					return $stack;
+    				} elseif ($handStrength >= 3) {
+    					return $call + $game_state['small_blind'] * 8;
     				}
     			}
     			/*if ($handStrength >= 8) {
