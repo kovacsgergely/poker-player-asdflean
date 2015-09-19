@@ -63,6 +63,19 @@ class Player
 				}*/
 				break;
 			case 3 :
+				if ($this->has4Flush($game_state)) {
+					return $stack;
+				}
+				
+				$bestHand = $this->getBestHand($game_state);
+				
+				if (
+					$bestHand['bestHand'] &&
+					$bestHand['bestHand'] != $bestHand['bestFlop']
+				) {
+					return $stack;
+				}
+				break;
 			case 4 :
 			case 5 :
 				$bestHand = $this->getBestHand($game_state);
@@ -71,6 +84,9 @@ class Player
 					$bestHand['bestHand'] &&
 					$bestHand['bestHand'] != $bestHand['bestFlop']
 				) {
+					return $stack;
+				}
+				if ($this->hasFlush($game_state)) {
 					return $stack;
 				}
 				
@@ -478,5 +494,77 @@ class Player
 		}
 		
 		return $retval;		
+	}
+	
+	public function hasFlush($game_state){
+		$suits = array();
+		if (isset($game_state['community_cards'])) {
+			$community_cards = $game_state['community_cards'];
+			foreach ($community_cards as $value) {
+				$suits[] = $value['suit'];
+			}
+		}
+	
+		$player = $this->getMyPlayer($game_state);
+		if ($player) {
+			$cards = $player['hole_cards'];
+			foreach ($cards as $value) {
+				$suits[] = $value['suit'];
+			}
+		}
+		$retsuits = array();
+		foreach($suits as $value)
+		{
+			if(array_key_exists($value,$retsuits))
+			{
+				$retsuits[$value]++;
+			}
+			else
+			{
+				$retsuits[$value] = 1; 
+			}
+		}
+		foreach ($retsuits as $key => $value) {
+			if($value >= 5){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public function has4Flush($game_state){
+		$suits = array();
+		if (isset($game_state['community_cards'])) {
+			$community_cards = $game_state['community_cards'];
+			foreach ($community_cards as $value) {
+				$suits[] = $value['suit'];
+			}
+		}
+	
+		$player = $this->getMyPlayer($game_state);
+		if ($player) {
+			$cards = $player['hole_cards'];
+			foreach ($cards as $value) {
+				$suits[] = $value['suit'];
+			}
+		}
+		$retsuits = array();
+		foreach($suits as $value)
+		{
+			if(array_key_exists($value,$retsuits))
+			{
+				$retsuits[$value]++;
+			}
+			else
+			{
+				$retsuits[$value] = 1; 
+			}
+		}
+		foreach ($retsuits as $key => $value) {
+			if($value == 4){
+				return true;
+			}
+		}
+		return false;
 	}
 }
