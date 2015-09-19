@@ -21,8 +21,8 @@ class Player
     	$communityCards = $this->getCommunityCards($game_state);
     	$flop = $communityCards['turn'];
     	$call = $game_state['current_buy_in'] - $myPlayer['bet'];
-    	//$raised = ($game_state['current_buy_in'] > ($game_state['small_blind'] * 2));
-    	$raised = $this->isRaised($game_state);
+    	$raised = ($game_state['current_buy_in'] > ($game_state['small_blind'] * 2));
+    	//$raised = $this->isRaised($game_state);
     	$raise = 0;
     	if ($raised) {
     		$raise = $game_state['current_buy_in'];
