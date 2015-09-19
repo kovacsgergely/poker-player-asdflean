@@ -15,7 +15,7 @@ class Player
     	}
     	foreach ($holeCards as $card) {
     		if (!in_array($card['rank'], array(2, 3, 4, 5, 6, 7, 8, 9, 10))) {
-    			return round($stack / 2);
+    			return $stack;
     		}
     	}
     	
@@ -36,7 +36,15 @@ class Player
 			}
 		}
 			
-		return $retval;				
-    		
+		return $retval;
     }
+    
+    public function isFigure($cards)
+	{
+		if (!in_array($card['rank'], array(2, 3, 4, 5, 6, 7, 8, 9, 10))) {
+			return true;
+		}
+		
+		return false;
+	}
 }
