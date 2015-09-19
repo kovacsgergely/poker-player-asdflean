@@ -8,15 +8,14 @@ class Player
     {
     	$holeCards = array();
     	$stack = 1000;
-    	foreach ($game_state['players'] as $player) {
-    		if (isset($player['hole_cards']) && !empty($player['hole_cards'])) {
-    			$holeCards = $player['hole_cards'];
-    			$stack = $player['stack'];
-    		}
+    	$myPlayer = $this->getMyPlayer($game_state);
+    	if ($myPlayer) {
+    		$holeCards = $myPlayer['hole_cards'];
+    		$stack = $myPlayer['stack'];
     	}
     	foreach ($holeCards as $card) {
-    		if (!in_array($card['rank'], array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))) {
-    			return $stack;
+    		if (!in_array($card['rank'], array(2, 3, 4, 5, 6, 7, 8, 9, 10))) {
+    			return round($stack / 2);
     		}
     	}
     	
@@ -25,5 +24,19 @@ class Player
 
     public function showdown($game_state)
     {
+    }
+    
+    public function getMyPlayer($game_state)
+	{
+		$retval = array();
+		foreach ($game_state['players'] as $player) {
+    		if (isset($player['hole_cards']) && !empty($player['hole_cards'])) {
+				$retval = $player;
+				break;
+			}
+		}
+			
+		return $retval;				
+    		
     }
 }
