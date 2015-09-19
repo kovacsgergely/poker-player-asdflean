@@ -21,7 +21,8 @@ class Player
     	$communityCards = $this->getCommunityCards($game_state);
     	$flop = $communityCards['turn'];
     	$call = $game_state['current_buy_in'] - $myPlayer['bet'];
-    	$raised = ($game_state['current_buy_in'] > ($game_state['small_blind'] * 2));
+    	//$raised = ($game_state['current_buy_in'] > ($game_state['small_blind'] * 2));
+    	$raised = $this->isRaised($game_state);
     	$raise = 0;
     	if ($raised) {
     		$raise = $game_state['current_buy_in'];
@@ -322,5 +323,38 @@ class Player
 		}
 	
 		return $retranks;
+	}
+	
+	public function isRaised($game_state)
+	{
+		$myPos = $this->getMyPosition($game_state);
+		$retval = false;
+		switch ($myPos)
+		{
+			case -1: {
+				break;
+			}
+			case -2: {
+				if ($game_state['pot'] > $game_state['small_blind']) {
+					$retval = true;
+				}
+				break;
+			}
+			default: {
+				if ($game_state['pot'] > 3 * $game_state['small_blind']) {
+					$retval = true;
+				}
+				break;
+			}
+		}
+	
+		return $retval;
+	}
+	
+	public function getMyPosition($game_state)
+	{
+		$myPos = $game_state['dealer'] - $game_state['in_action'];
+	
+		 return $myPos;
 	}
 }
