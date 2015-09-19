@@ -18,8 +18,29 @@ class Player
     		$this->getHand($game_state)
     	);
     	
-    	if ($handStrength > 6) {
-    		return $stack;
+    	$communityCards = $this->getCommunityCards($game_state);
+    	$flop = $communityCards['turn'];
+    	switch ($flop) {
+    		case 0 :
+    			if ($handStrength >= 7) {
+					return $stack;
+				}
+				break;
+			case 3 :
+				if ($handStrength >= 6) {
+					return $stack;
+				}
+				break;
+			case 4 :
+				if ($handStrength >= 5) {
+					return $stack;
+				}
+				break;
+			case 5 :
+				if ($handStrength >= 4) {
+					return $stack;
+				}
+				break;
     	}
     	
     	/*if (count($holeCards) > 1) {
