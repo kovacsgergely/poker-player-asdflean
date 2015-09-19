@@ -110,8 +110,10 @@ class Player
 			'cards' => '',
 			'turn' => 0,
 		);
-		$retval['cards'] = $game_state['community_cards'];
-		$retval['turn'] = count($game_state['community_cards']);
+		if (isset($game_state['community_cards'])) {
+			$retval['cards'] = $game_state['community_cards'];
+			$retval['turn'] = count($game_state['community_cards']);
+		}
 		
 		return $retval;
 	}
