@@ -106,7 +106,12 @@ class Player
 					$bestHand['bestHand'] &&
 					$bestHand['bestHand'] != $bestHand['bestFlop']
 				) {
-					return $stack;
+					if (
+						$bestHand['bestHand'] != 'pair' ||
+						$this->isStrongestPair($game_state)
+					) {
+						return $stack;
+					}
 				}
 				break;
 			case 4 :
@@ -117,7 +122,12 @@ class Player
 					$bestHand['bestHand'] &&
 					$bestHand['bestHand'] != $bestHand['bestFlop']
 				) {
-					return $stack;
+					if (
+						$bestHand['bestHand'] != 'pair' ||
+						$this->isStrongestPair($game_state)
+					) {
+						return $stack;
+					}
 				}
 				if ($this->hasFlush($game_state)) {
 					return $stack;
@@ -452,6 +462,57 @@ class Player
 		
 	}
 	
+	public function isStrongestPair($game_state)
+	{
+		$communityCards = $this->getCommunityCards($game_state);
+		if ($communityCards['turn'] < 3)
+		{
+			return $retval;
+		}
+		
+		$player = $this->getMyPlayer($game_state);
+		$commCards = $communityCards['cards'];
+		$playCards = $player['hole_cards'];
+		
+		$values = array();
+		foreach ($commCards as $card) {
+			$values[] = $this->getCardValue($card);
+		}
+		foreach ($playCards as $card) {
+			$values[] = $this->getCardValue($card);
+		}
+		$maxValue = max($values);
+		
+		$maxValueOnTable = false;
+		foreach ($commCards as $card) {
+			if ($this->getCardValue($card) == $maxValue) {
+				$maxValueOnTable = true;
+				break;
+			}
+		}
+		$maxValueInHand = false;
+		foreach ($commCards as $card) {
+			if ($this->getCardValue($card) == $maxValue) {
+				$maxValueInHand = true;
+				break;
+			}
+		}
+		
+		return ($maxValueOnTable && $maxValueInHand);
+	}
+	
+	public function getCardValue($card)
+	{
+		switch ($card['rank']) {
+		case 'J' : return 11;
+		case 'Q' : return 12;
+		case 'K' : return 13;
+		case 'A' : return 14;
+		}
+		
+		return $card['rank'];
+	}
+	
 	public function getCardRanks($cards) {
 		$ranks = array();
 		
@@ -599,5 +660,88 @@ class Player
 			}
 		}
 		return false;
+	}
+	
+	public function convertToNum($card) 
+	{
+		switch ($card['rank'])
+		{
+			case 'J':
+			{
+				$card['rank'] = 11;
+				break;
+			}
+			case 'Q':
+			{
+				$card['rank'] = 12;
+				break;
+			}
+			case 'K':
+			{
+				$card['rank'] = 13;
+				break;
+			}
+			case 'A':
+			{
+				$card['rank'] = 14;
+				break;
+			}
+			default:
+			{
+				break;
+			}
+			
+			return $card;
+		}
+	}
+	
+	public function hasRow($game_state)
+	{
+		$allCards = array_merge($this->getMyPlayer($game_state)['hole_cards'], $game_state['community_cards']);
+		$cardNum = count($allCards);
+		
+		if ($cardNum < 5) {
+			return false;
+		} 
+		
+		foreach ($allCards as $key => $value) {
+			$allCards[$key] = $this->convertToNum($card);
+		}
+		
+		for ($i = 0; $i < 5; $i++) {
+			if ($allCards[0]['rank'] == 14) {
+				$allCards[0]['rank'] = 1;
+			}
+			
+			if($allCards[$i]['rank'] + 1 != $allCards[$i + 1]['rank']) {
+				return false;
+			}
+		}
+		
+		if ($cardNum > 5) {
+			for ($i = 1; $i < 6; $i++) {
+				if ($allCards[1]['rank'] == 14) {
+					$allCards[1]['rank'] = 1;
+				}
+				
+				if($allCards[$i]['rank'] + 1 != $allCards[$i + 1]['rank']) {
+					return false;
+				}
+			}
+		}
+		
+		if ($cardNum > 6) {
+			for ($i = 2; $i < 7; $i++) {
+				if ($allCards[2]['rank'] == 14) {
+					$allCards[2]['rank'] = 1;
+				}
+				
+				if($allCards[$i]['rank'] + 1 != $allCards[$i + 1]['rank']) {
+					return false;
+				}
+			}
+		}
+		
+		return true;		
 	}
 }
