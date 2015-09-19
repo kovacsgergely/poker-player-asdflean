@@ -2,7 +2,7 @@
 
 class Player
 {
-    const VERSION = "AsdfLEAN 1.0";
+    const VERSION = "AsdfLEAN 1.5";
 
     public function betRequest($game_state)
     {
@@ -13,11 +13,33 @@ class Player
     		$holeCards = $myPlayer['hole_cards'];
     		$stack = $myPlayer['stack'];
     	}
-    	foreach ($holeCards as $card) {
-    		if ($this->isFigure($card)) {
+    	if (count($holeCards) > 1) {
+    		if ($holeCards[0]['rank'] == 'A') {
+    			return $stack;
+    		}
+    		if (
+    			(
+    				$this->isFigure($holeCards[0]) &&
+    				(
+    					$this->isFigure($holeCards[1]) ||
+    					$holeCards[1]['rank'] > 6
+    				)
+    			) || (
+    				$this->isFigure($holeCards[1]) &&
+    				(
+    					$this->isFigure($holeCards[0]) ||
+    					$holeCards[0]['rank'] > 6
+    				)
+    			)
+    		) {
     			return $stack;
     		}
     	}
+    	/*foreach ($holeCards as $card) {
+    		if ($this->isFigure($card)) {
+    			return $stack;
+    		}
+    	}*/
     	if ($this->hasPocketPair($game_state)) {
     		return $stack;
     	}
