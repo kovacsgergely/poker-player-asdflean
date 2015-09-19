@@ -45,6 +45,8 @@ class Player
     			} elseif ($raised) {
     				if ($handStrength >= 7) {
     					return $stack;
+    				} elseif ($handStrength >= 5) {
+    					return $call;
     				}
     			}
     			if (!$raised) {
