@@ -2,7 +2,7 @@
 
 class Player
 {
-    const VERSION = "AsdfLEAN 1.5";
+    const VERSION = "AsdfLEAN 1.6";
 
     public function betRequest($game_state)
     {
@@ -13,7 +13,16 @@ class Player
     		$holeCards = $myPlayer['hole_cards'];
     		$stack = $myPlayer['stack'];
     	}
-    	if (count($holeCards) > 1) {
+    	
+    	$handStrength = $this->getHandStrength(
+    		$this->getHand($game_state)
+    	);
+    	
+    	if ($handStrength > 7) {
+    		return $stack;
+    	}
+    	
+    	/*if (count($holeCards) > 1) {
     		if ($holeCards[0]['rank'] == 'A') {
     			return $stack;
     		}
@@ -34,7 +43,8 @@ class Player
     		) {
     			return $stack;
     		}
-    	}
+    	}*/
+    	
     	/*foreach ($holeCards as $card) {
     		if ($this->isFigure($card)) {
     			return $stack;
@@ -98,5 +108,129 @@ class Player
 		}
 		
 		return false;	
+	}
+	
+	public function getHand($game_state)
+	{
+		$player = $this->getMyPlayer($game_state);
+		$cards = $player['hole_cards'];
+		
+		$ranks = array();
+		if (count($cards) > 0) {
+			$ranks[] = (string)$cards[0]['rank'];
+			if (count($cards) > 1) {
+				$ranks[] = (string)$cards[1]['rank'];
+			}
+		}
+		sort($ranks);
+		
+		return strtoupper(implode('', $ranks));
+	}
+	
+	public function getHandStrength($rankValue)
+	{
+		$retval = 0;
+		
+		$values = array(
+			'1' => array(
+				'3J',
+				'2J',
+				'310',
+				'210',
+				'59',
+				'49',
+				'34',
+				'23',
+			),
+			'2' => array(
+				'4Q',
+				'3Q',
+				'5J',
+				'4J',
+				'610',
+				'510',
+				'410',
+				'56',
+			),
+			'3' => array(
+				'3K',
+				'2K',
+				'6Q',
+				'5Q',
+				'7J',
+				'6J',
+				'810',
+				'710',
+				'67',
+				'33',
+				'22',
+			),
+			'4' => array(
+				'2A',
+				'5K',
+				'4K',
+				'8Q',
+				'7Q',
+				'9J',
+				'8J',
+				'910',
+				'89',
+				'78',
+				'55',
+				'44',
+			),
+			'5' => array(
+				'5A',
+				'4A',
+				'3A',
+				'7K',
+				'6K',
+				'9Q',
+				'10J',
+				'77',
+				'66',
+			),
+			'6' => array(
+				'6A',
+				'5A',
+				'9K',
+				'8K',
+				'10Q',
+				'99',
+				'88',
+			),
+			'7' => array(
+				'8A',
+				'7A',
+				'10K',
+				'JQ',
+				'1010',
+			),
+			'8' => array(
+				'JA',
+				'10A',
+				'9A',
+				'KQ',
+				'JK',
+				'JJ',
+			),
+			'9' => array(
+				'AA',
+				'AK',
+				'KK',
+				'QQ',
+				'AQ',
+			),
+		);
+		
+		foreach($values as $handRank => $hands) {
+			foreach ($hands as $hand) {
+				if ($rankValue == $hand) {
+					$retval = $handRank;
+				}
+			}	
+		}
+		
+		return (int)$retval;
 	}
 }
