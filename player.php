@@ -31,17 +31,9 @@ class Player
 				}
 				break;
 			case 3 :
-				if ($handStrength >= 6) {
-					return $stack;
-				}
-				break;
 			case 4 :
-				if ($handStrength >= 5) {
-					return $stack;
-				}
-				break;
 			case 5 :
-				if ($handStrength >= 4) {
+				if (count($this->getCardRanks($game_state))) {
 					return $stack;
 				}
 				break;
@@ -89,6 +81,9 @@ class Player
     public function getMyPlayer($game_state)
 	{
 		$retval = array();
+		if (!isset($game_state['players'])) {
+			return $retval;
+		}
 		foreach ($game_state['players'] as $player) {
     		if (isset($player['hole_cards']) && !empty($player['hole_cards'])) {
 				$retval = $player;
@@ -259,5 +254,48 @@ class Player
 		}
 		
 		return (int)$retval;
+	}
+	
+	public function getCardRanks($game_state) {
+		$ranks = array();
+		if (isset($game_state['community_cards'])) {
+			$community_cards = $game_state['community_cards'];
+			foreach ($community_cards as $value) {
+				$ranks[] = $value['rank'];
+			}
+		}
+		
+		$player = $this->getMyPlayer($game_state);
+		if ($player) {
+			$cards = $player['hole_cards'];
+			foreach ($cards as $value) {
+				$ranks[] = $value['rank'];
+			}
+		}
+		sort($ranks);
+	
+		$retranks = array();
+		foreach($ranks as $value)
+		{
+			strtoupper($value);
+			if(array_key_exists($value,$retranks))
+			{
+				$retranks[$value]++;
+			}
+			else
+			{
+				$retranks[$value] = 1; 
+			}
+		}
+	
+		foreach($retranks as $key => $value)
+		{
+			if($value == 1)
+			{
+				unset($retranks[$key]);
+			}
+		}
+	
+		return $retranks;
 	}
 }
