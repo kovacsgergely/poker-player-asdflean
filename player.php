@@ -385,7 +385,7 @@ class Player
 			return $retval;
 		}
 		
-		$player = $this->getMyPlayer();
+		$player = $this->getMyPlayer($game_state);
 		$commCards = $communityCards['cards'];
 		$playCards = $player['hole_cards'];
 		$allCards = array_merge($commCards, $playCards);
