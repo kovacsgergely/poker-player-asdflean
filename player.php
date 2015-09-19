@@ -334,7 +334,7 @@ class Player
 				'1010',
 			),
 			'8' => array(
-				'JA',
+				'AJ',
 				'10A',
 				'9A',
 				'KQ',
