@@ -24,9 +24,9 @@ class Player
     	switch ($flop) {
     		case 0 :
     			//preflop
-    			if ($handStrength >= 7) {
+    			if ($handStrength >= 8) {
 					return $stack;
-				} elseif ($handStrength >= 4) {
+				} elseif ($handStrength >= 7) {
 					return $call;
 				}
 				break;
