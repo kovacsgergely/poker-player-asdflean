@@ -20,10 +20,14 @@ class Player
     	
     	$communityCards = $this->getCommunityCards($game_state);
     	$flop = $communityCards['turn'];
+    	$call = $game_state['current_buy_in'] - $myPlayer['bet'];
     	switch ($flop) {
     		case 0 :
+    			//preflop
     			if ($handStrength >= 7) {
 					return $stack;
+				} elseif ($handStrength >= 4) {
+					return $call;
 				}
 				break;
 			case 3 :
