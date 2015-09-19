@@ -2,7 +2,7 @@
 
 class Player
 {
-    const VERSION = "AsdfLEAN 1.6";
+    const VERSION = "AsdfLEAN 1.8";
 
     public function betRequest($game_state)
     {
@@ -18,7 +18,7 @@ class Player
     		$this->getHand($game_state)
     	);
     	
-    	if ($handStrength > 7) {
+    	if ($handStrength > 6) {
     		return $stack;
     	}
     	
