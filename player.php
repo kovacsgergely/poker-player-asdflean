@@ -52,7 +52,11 @@ class Player
     		!empty($leanMasters)
     	) {
     		if ($leanMasters['bet'] > $game_state['small_blind'] * 2) {
-    			return $stack;
+    			if ($handStrength >= 4) {
+    				return $stack;
+    			} else {
+    				return $call;
+    			}
     		}
     	}
     	
