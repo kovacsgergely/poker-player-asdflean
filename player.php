@@ -50,9 +50,9 @@ class Player
     			return $stack;
     		}
     	}*/
-    	if ($this->hasPocketPair($game_state)) {
+    	/*if ($this->hasPocketPair($game_state)) {
     		return $stack;
-    	}
+    	}*/
     	
         return 0;
     }
