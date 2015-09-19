@@ -54,14 +54,23 @@ class Player
 			case 3 :
 			case 4 :
 			case 5 :
-				if (count($this->getCardRanks($game_state))) {
+				$bestHand = $this->getBestHand($game_state);
+				
+				if (
+					$bestHand['bestHand'] &&
+					$bestHand['bestHand'] != $bestHand['bestFlop']
+				) {
+					return $stack;
+				}
+				
+				/*if (count($this->getCardRanks($game_state))) {
 					if ($handStrength >= 7) {
 						return $stack;
 					}
 				}
 				if ($handStrength >= 8) {
 					return $stack;
-				}
+				}*/
 				break;
     	}
     	
@@ -282,7 +291,7 @@ class Player
 		return (int)$retval;
 	}
 	
-	public function getCardRanks($game_state) {
+	/*public function getCardRanks($game_state) {
 		$ranks = array();
 		if (isset($game_state['community_cards'])) {
 			$community_cards = $game_state['community_cards'];
@@ -323,7 +332,7 @@ class Player
 		}
 	
 		return $retranks;
-	}
+	}*/
 	
 	public function isRaised($game_state)
 	{
@@ -356,5 +365,107 @@ class Player
 		$myPos = $game_state['dealer'] - $game_state['in_action'];
 	
 		 return $myPos;
+	}
+	
+	public function getBestHand($game_state)
+	{
+		$retval = array(
+			'bestHand' => '',
+			'bestFlop' => '',
+		);
+		
+		$communityCards = $this->getCommunityCards($game_state);
+		if ($communityCards['turn'] < 3)
+		{
+			return $retval;
+		}
+		
+		$player = $this->getMyPlayer();
+		$commCards = $communityCards['cards'];
+		$playCards = $player['hole_cards'];
+		$allCards = array_merge($commCards, $playCards);
+		
+		$retval['bestHand'] = $this->isDrillPoker($this->getCardRanks($allCards));
+		$retval['bestFlop'] = $this->isDrillPoker($this->getCardRanks($commCards));
+		
+		return $retval;
+		
+	}
+	
+	public function getCardRanks($cards) {
+		$ranks = array();
+		
+		foreach ($cards as $card) {
+			$ranks[] = $card['rank'];
+		}
+	
+		sort($ranks);
+	
+		$retranks = array();
+		foreach($ranks as $value)
+		{
+			strtoupper($value);
+			if(array_key_exists($value,$retranks))
+			{
+				$retranks[$value]++;
+			}
+			else
+			{
+				$retranks[$value] = 1; 
+			}
+		}
+	
+		foreach($retranks as $key => $value)
+		{
+			if($value == 1)
+			{
+				unset($retranks[$key]);
+			}
+		}
+	
+		return $retranks;
+	}
+	
+	public function isDrillPoker($cardRanks) {
+		$retval = '';
+		$pair = 0;
+		$drill = 0;
+		$full = 0;
+		$poker = 0;
+		$doublepair = 0;
+				
+		foreach ($cardRanks as $key => $value) {
+			if ($value == 2)
+			{
+				if ($pair == 1)
+				{
+					$doublepair = 1;
+					$pair = 0;
+				}
+				$pair = 1;
+			}
+			else if ($value == 3)
+			{
+				if($pair)
+				{
+					$full = 1;
+					$pair = 0;
+				}
+			}
+			else if ($value == 4)
+			{
+				$poker = 1;
+			}		
+		}
+		
+		foreach (array('pair' => $pair, 'drill' => $drill, 'full' => $full, 'poker' => $poker, 'doublepair' => $doublepair) as $key => $value)
+		{
+			if ($value == 1)
+			{
+				$retval = $key;
+			}
+		}
+		
+		return $retval;		
 	}
 }
