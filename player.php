@@ -21,19 +21,44 @@ class Player
     	$communityCards = $this->getCommunityCards($game_state);
     	$flop = $communityCards['turn'];
     	$call = $game_state['current_buy_in'] - $myPlayer['bet'];
+    	$raised = ($game_state['current_buy_in'] > ($game_state['small_blind'] * 2));
+    	$raise = 0;
+    	if ($raised) {
+    		$raise = $game_state['current_buy_in'];
+    	}
     	switch ($flop) {
     		case 0 :
     			//preflop
-    			if ($handStrength >= 8) {
+    			if (
+    				$raised &&
+    				$raise > $stack / 3
+    			) {
+    				if ($handStrength >= 9) {
+    					return $stack;
+    				} elseif ($handStrength >= 8) {
+    					return $call;
+    				}
+    			}
+    			if (!$raised) {
+    				if ($handStrength >= 7) {
+    					return $stack;
+    				}
+    			}
+    			/*if ($handStrength >= 8) {
 					return $stack;
 				} elseif ($handStrength >= 7) {
 					return $call;
-				}
+				}*/
 				break;
 			case 3 :
 			case 4 :
 			case 5 :
 				if (count($this->getCardRanks($game_state))) {
+					if ($handStrength >= 7) {
+						return $stack;
+					}
+				}
+				if ($handStrength >= 8) {
 					return $stack;
 				}
 				break;
