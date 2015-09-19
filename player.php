@@ -467,7 +467,7 @@ class Player
 		$communityCards = $this->getCommunityCards($game_state);
 		if ($communityCards['turn'] < 3)
 		{
-			return $retval;
+			return false;
 		}
 		
 		$player = $this->getMyPlayer($game_state);
@@ -491,7 +491,7 @@ class Player
 			}
 		}
 		$maxValueInHand = false;
-		foreach ($commCards as $card) {
+		foreach ($playCards as $card) {
 			if ($this->getCardValue($card) == $maxValue) {
 				$maxValueInHand = true;
 				break;
