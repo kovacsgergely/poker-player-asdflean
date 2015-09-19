@@ -27,6 +27,35 @@ class Player
     	if ($raised) {
     		$raise = $game_state['current_buy_in'];
     	}
+    	
+    	$leanMasters = array();
+    	$outCount = 0;
+    	$foldCount = 0;
+    	foreach ($game_state['players'] as $player) {
+    		if (
+    			$player['name'] == 'LeanMasters' &&
+    			$player['status'] == 'active'
+    		) {
+    			$leanMasters = $player;
+    		}
+    		if ($player['status'] == 'out') {
+    			$outCount++;
+    		}
+    		if ($player['status'] == 'folded') {
+    			$foldCount++;
+    		}
+    	}
+    	
+    	if (
+    		($outCount + $foldCount) == 3 &&
+    		$foldCount > 0 &&
+    		!empty($leanMasters)
+    	) {
+    		if ($leanMasters['bet'] > $game_state['small_blind'] * 2) {
+    			return $stack;
+    		}
+    	}
+    	
     	switch ($flop) {
     		case 0 :
     			//preflop
