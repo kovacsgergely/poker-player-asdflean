@@ -30,6 +30,9 @@ class Player
     	switch ($flop) {
     		case 0 :
     			//preflop
+    			if ($stack < $game_state['small_blind'] * 10) {
+    				return $stack;
+    			}
     			if (
     				$raised &&
     				$raise > $stack / 3
